@@ -16,12 +16,12 @@ cabal-version:       >=1.8
 
 Extra-Source-Files : 
 
-Homepage:        https://github.com/anton-k/csound-expression
-Bug-Reports:     https://github.com/anton-k/csound-expression/issues
+Homepage:        https://github.com/anton-k/temporal-csound
+Bug-Reports:     https://github.com/anton-k/temporal-csound/issues
 
 Source-repository head
     Type: git
-    Location: https://github.com/anton-k/csound-expression
+    Location: https://github.com/anton-k/temporal-csound
 
 
 library
