@@ -1,4 +1,6 @@
+{-# Language FlexibleInstances #-}
 module Csound (
+    {-
     -- * Converters
     CsdNote, csdNote, CsdDrum, csdDrum, 
     
@@ -6,6 +8,7 @@ module Csound (
     
     -- | Tools to make compositions out of timbres.
     sco, notes, drums,
+    -}
     module Temporal.Music,
     
     -- * Colors
@@ -13,9 +16,16 @@ module Csound (
     module Csound.Base
 ) where
 
-import Temporal.Music
+import Temporal.Music 
+import Temporal.Media(Track)
 import Csound.Base
 
+instance CsdSco (Track Double) where
+    toCsdEventList x = CsdEventList (dur x) (fmap toEvt $ render x)
+        where toEvt a = (eventStart a, eventDur a, eventContent a)
+    singleCsdEvent start dt a = delay start $ stretch dt $ temp a
+
+{-
 -- | Plays some notes with Csound instrument. 
 sco :: Arg a => (a -> Out) -> Score a -> SigOut
 sco instr s = score instr (fmap unpackEvent $ alignByZero $ render s)
@@ -40,4 +50,4 @@ type CsdDrum a = (D, a)
 
 csdDrum :: Drum a -> CsdDrum a
 csdDrum a = (double $ amp $ drumVolume a, drumParam a)
-
+-}
