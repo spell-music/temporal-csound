@@ -8,6 +8,30 @@ module Csound (
     
     -- | Tools to make compositions out of timbres.
     sco, notes, drums,
+    --
+    -- How to put the values in the container 'Temporal.Music.Score.Score'? There are many functions to construct the 'Temporal.Music.Score.Score'.
+    --
+    -- They live in the module "Temporal.Music.Score". If you are not familiar with it, you can start with six basic functions. 
+    --
+    -- * 'Temporal.Music.Score.rest' -- makes a pause that lasts for some time (in seconds).
+    --
+    -- * 'Temporal.Music.Score.temp' -- makes a score of one note that lasts for one second.    
+    --
+    -- * 'Temporal.Music.Score.line' -- plays a list of notes in sequence (one after the other).
+    -- 
+    -- * 'Temporal.Music.Score.chord' -- plays a list of notes in parallel (at the same time).
+    --
+    -- * 'Temporal.Music.Score.delay' -- delays all notes for some time.
+    --
+    -- * 'Temporal.Music.Score.stretch' -- change the tempo for all notes by the given ratio.
+    --
+    -- Let's play something:
+    --
+    -- > res = stretch 0.5 $ line [ temp a, stretch 2 $ temp b, rest 1, chord [temp a, temp b] ]
+    --
+    -- There are two handy infix operators for delay and stretch: @(+|)@ and @(*|)@. So we can write the previous score:
+    --
+    -- > res = 0.5 *| line [ temp a, 2 *| temp b, 1 +| chord [temp a, temp b] ]
     -}
     module Temporal.Music,
     
