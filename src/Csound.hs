@@ -41,14 +41,16 @@ module Csound (
     module Csound.Base
 ) where
 
-import Temporal.Music 
+import Temporal.Music hiding (delay, event, line, chord)
 import Temporal.Media(Track)
 import Csound.Base
+
+import qualified Temporal.Music as T
 
 instance CsdSco (Track Double) where
     toCsdEventList x = CsdEventList (dur x) (fmap toEvt $ render x)
         where toEvt a = (eventStart a, eventDur a, eventContent a)
-    singleCsdEvent start dt a = delay start $ stretch dt $ temp a
+    singleCsdEvent (start, dt, a) = del start $ str dt $ temp a
 
 {-
 -- | Plays some notes with Csound instrument. 
