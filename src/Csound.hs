@@ -11,21 +11,21 @@
 --
 -- * 'Temporal.Music.Score.temp' -- makes a score of one note that lasts for one second.    
 --
--- * 'Temporal.Music.Score.line' -- plays a list of notes in sequence (one after the other).
+-- * 'Temporal.Music.Score.mel' -- plays a list of notes in sequence (one after the other, short for @melody@).
 -- 
--- * 'Temporal.Music.Score.chord' -- plays a list of notes in parallel (at the same time).
+-- * 'Temporal.Music.Score.har' -- plays a list of notes in parallel (at the same time, short for @harmony@).
 --
--- * 'Temporal.Music.Score.delay' -- delays all notes for some time.
+-- * 'Temporal.Music.Score.del' -- delays all notes for some time (short for @delay@).
 --
--- * 'Temporal.Music.Score.stretch' -- change the tempo for all notes by the given ratio.
+-- * 'Temporal.Music.Score.str' -- change the tempo for all notes by the given ratio (short for @stretch@).
 --
 -- Let's play something:
 --
--- > res = stretch 0.5 $ line [ temp a, stretch 2 $ temp b, rest 1, chord [temp a, temp b] ]
+-- > res = str 0.5 $ mel [ temp a, str 2 $ temp b, rest 1, har [temp a, temp b] ]
 --
 -- There are two handy infix operators for delay and stretch: @(+|)@ and @(*|)@. So we can write the previous score:
 --
--- > res = 0.5 *| line [ temp a, 2 *| temp b, 1 +| chord [temp a, temp b] ]
+-- > res = 0.5 *| mel [ temp a, 2 *| temp b, 1 +| har [temp a, temp b] ]
 module Csound (
     {-
     -- * Converters
