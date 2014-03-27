@@ -117,12 +117,9 @@ module Csound (
     -- > import Csound 
     -- > import Csound.Patch(vibraphone2)
     -- >
-    -- > -- | Adds fade in for 0.01 seconds and fade out for 1.5 seconds:
-    -- > instr = mul (fades 0.01 1.5) . stringPad
-    -- >
     -- > -- | Plays with virtual midi device (if you have a midi device
     -- > -- you can substitute @vdac@ for @dac@).
-    -- > main = vdac $ mul 0.1 $ largeHall $ onMidi instr
+    -- > main = vdac $ mul 0.1 $ largeHall $ onMidi vibraphone2
     -- 
     onMidi, onMidin, onPgmidi, 
     onMidiWith, onMidinWith, onPgmidiWith,    

@@ -1,13 +1,14 @@
 -- | Ready to use instruments.
 --
+-- An instrument takes in a note (@N@ which is shortcut for @CsdNote Unit@ 
+-- or @Dr@ which is shortcut for @CsdDrum Unit@) and procuces a signal.
+--  We can use instruments with functions 'Csound.notes' and 'Csound.drums'.
+--
 -- > import Csound 
 -- > import Csound.Patch(stringPad)
 -- >
--- > -- | Adds fade in for 0.1 seconds and fade out for 0.5 seconds:
--- > instr = mul (fades 0.1 0.5) . stringPad
--- >
 -- > -- | Plays C-major chord.
--- > main = dac $ mul 0.2 $ smallHall $ mix $ notes instr $	
+-- > main = dac $ mul 0.2 $ smallHall $ mix $ notes stringPad $	
 -- > 	 str 0.5 $ mel [c, e, g, str 4 $ har [c, e, g, high c], rest 4]
 --
 -- Let's explain the functions:
@@ -22,7 +23,7 @@
 -- > --
 -- > -- notes -- applies an instrument to the notes
 -- > --
--- > -- instr -- is defined above (stringPad + fades)
+-- > -- stringPad -- predefined instrument
 -- > -- 
 -- > -- str -- stretch the notes in time domain
 -- > --
@@ -35,21 +36,22 @@
 -- > -- rest -- pause for a given amount of time
 module Csound.Patch(
     -- * Pads
-    stringPad, phasingSynth, delaySaw, 
-    melodica, tibetan, toneWheel,
+    stringPad, phasingSynth, pulseWidthPad,
+    melodica, tibetan, 
 
     -- * Mystic
-    sparkles,
+    sparkles, xanaduHarp,
 
     -- * Lead
-    pulseWidth,
+    delaySaw, pulseWidth, toneWheel,
 
     -- * Tech
     okComp, OkCompParam(..), fmMod,
 
     -- * Plucked
-    delayedString, plucked, xanadu1, xanadu2,
-    guitar, harpsichord, plainString,
+    delayedStringLong, delayedStringShort, 
+    plucked, xanadu1, xanadu2,
+    guitar, harpsichord, harpsichordHarp, plainString, plainStringHarp,
 
     -- * Strike
     noisyMarimba, dahina, banyan, xylophone,
@@ -77,7 +79,7 @@ import qualified Csound.Catalog.Drum as C
 
 import Csound.Converter
 
-fade :: SigSpace a => D -> D -> (N -> a) -> (N -> a)
+fade :: SigSpace a => D -> D -> (b -> a) -> (b -> a)
 fade ris dec f = mul (fades ris dec) . f
 
 --------------------------------------------------------------------
@@ -89,35 +91,42 @@ stringPad = fade 0.5 1.5 $ fromAsFs C.stringPad
 phasingSynth :: N -> Sig
 phasingSynth = fade 0.3 1.5 $ fromAsFs C.phasingSynth
 
-delaySaw :: N -> Sig
-delaySaw = fromFs $ C.delaySaw
-
 melodica :: N -> SE Sig
-melodica = fromFs $ C.melody 5
+melodica = fade 0.5 2.5 $ fromFs $ C.melody 5
 
-tibetan :: N -> Sig
-tibetan = fromF $ C.tibetan 9 0.02
+-- | Parameter is time of fade out in seconds.
+tibetan :: D -> N -> Sig
+tibetan dec = fade 1 dec $ fromF $ C.tibetan 9 0.02
 
-toneWheel :: N -> Sig
-toneWheel = fromF C.toneWheel
+pulseWidthPad :: N -> Sig
+pulseWidthPad = fade 1 1.5 $ fromAsFs C.pulseWidth
 
 --------------------------------------------------------------------
 -- Mystic
 
 sparkles :: N -> SE Sig
-sparkles = fromFs $ C.blue 3 8 0.5 15
+sparkles = fade 0.01 2.5 $ fromFs $ C.blue 3 8 0.5 15
+
+xanaduHarp :: N -> SE Sig
+xanaduHarp = fade 0.01 5 $ fromF C.xanadu1
 
 --------------------------------------------------------------------
 -- Lead
 
 pulseWidth :: N -> Sig
-pulseWidth = fromAsFs C.pulseWidth
+pulseWidth = fade 0.1 0.1 $ fromAsFs C.pulseWidth
+
+delaySaw :: N -> Sig
+delaySaw = fade 0.1 0.2 $ fromFs $ C.delaySaw
+
+toneWheel :: N -> Sig
+toneWheel = fade 0.01 0.1 $ fromF C.toneWheel
 
 --------------------------------------------------------------------
 -- Tech
 
 okComp :: CsdDrum OkCompParam -> SE Sig
-okComp (amp, OkCompParam rate) = mul (sig amp) $ C.okComputer (sig rate)
+okComp = fade 0.01 0.1 $ \(amp, OkCompParam rate) -> mul (sig amp) $ C.okComputer (sig rate)
 
 newtype OkCompParam = OkCompParam { unOkCompParam :: D }
 
@@ -130,78 +139,96 @@ instance Default OkCompParam where
 	def = OkCompParam 10
 
 fmMod :: N -> Sig
-fmMod = fromFs $ C.fmMod 5
+fmMod = fade 0.01 0.1 $ fromFs $ C.fmMod 5
 
 --------------------------------------------------------------------
 -- Plucked
 
-delayedString :: N -> Sig
-delayedString = fromF C.delayedString
+pick :: SigSpace b => D -> (a -> b) -> (a -> b)
+pick dec = fade 0.01 dec
+
+delayedStringLong :: N -> Sig
+delayedStringLong = pick 2.5 $ fromF C.delayedString
+
+delayedStringShort :: N -> Sig
+delayedStringShort = pick 0.1 $ fromF C.delayedString
 
 plucked :: N -> Sig
-plucked = fromFs C.rhodes
+plucked = pick 0.3 $ fromFs C.rhodes
 
 xanadu1 :: N -> SE Sig
-xanadu1 = fromF C.xanadu1
+xanadu1 = pick 1.5 $ fromF C.xanadu1
 
 xanadu2 :: N -> SE Sig
-xanadu2 = fromF C.xanadu2
+xanadu2 = pick 0.8 $ fromF C.xanadu2
 
 guitar :: N -> Sig
-guitar = fromF C.guitar
+guitar = fade 0.05 2 $ fromF C.guitar
 
 harpsichord :: N -> Sig
-harpsichord = fromF C.harpsichord
+harpsichord = pick 0.2 $ fromF C.harpsichord
+
+harpsichordHarp :: N -> Sig
+harpsichordHarp = pick 5 $ fromF C.harpsichord
 
 plainString :: N -> Sig
-plainString = fromF C.plainString
+plainString = pick 0.5 $ fromF C.plainString
+
+plainStringHarp :: N -> Sig
+plainStringHarp = pick 5 $ fromF C.plainString
 
 --------------------------------------------------------------------
 -- Striked
 
+strk :: SigSpace b => (a -> b) -> (a -> b)
+strk = pick 2.5
+
 noisyMarimba :: N -> SE Sig
-noisyMarimba = fromFs C.blackMarimba
+noisyMarimba = strk $ fromFs C.blackMarimba
 
 dahina :: N -> Sig
-dahina = fromFs C.dahina
+dahina = strk $ fromFs C.dahina
 
 banyan :: N -> Sig
-banyan = fromFs C.banyan
+banyan = strk $ fromFs C.banyan
 
 xylophone :: N -> Sig
-xylophone = fromFs C.xylophone
+xylophone = strk $ fromFs C.xylophone
 
 spinelSphere :: N -> Sig
-spinelSphere = fromFs C.spinelSphere
+spinelSphere = strk $ fromFs C.spinelSphere
 
 aluminumBar :: N -> Sig
-aluminumBar = fromFs C.uniformAluminumBar
+aluminumBar = strk $ fromFs C.uniformAluminumBar
 
 vibraphone1 :: N -> Sig
-vibraphone1 = fromFs C.vibraphone1
+vibraphone1 = strk $ fromFs C.vibraphone1
 
 vibraphone2 :: N -> Sig
-vibraphone2 = fromFs C.vibraphone2
+vibraphone2 = strk $ fromFs C.vibraphone2
 
 wineGlass :: N -> Sig
-wineGlass = fromFs C.wineGlass
+wineGlass = strk $ fromFs C.wineGlass
 
 xing :: N -> Sig 
-xing = fromFs $ C.xing 3
+xing = strk $ fromFs $ C.xing 3
 
 -- Bells
 
+bl :: SigSpace b => (a -> b) -> (a -> b)
+bl = pick 4
+
 amBell :: N -> Sig
-amBell = fromAFs $ C.amBell
+amBell = bl $ fromAFs $ C.amBell
 
 fmTubularBell :: N -> Sig
-fmTubularBell = fromFs $ C.fmTubularBell
+fmTubularBell = bl $ fromFs $ C.fmTubularBell
 
 tubularBell :: N -> Sig
-tubularBell = fromFs C.tubularBell
+tubularBell = bl $ fromFs C.tubularBell
 
 albertClockBellBelfast :: N -> Sig
-albertClockBellBelfast = fromFs C.albertClockBellBelfast
+albertClockBellBelfast = bl $ fromFs C.albertClockBellBelfast
 
 --------------------------------------------------------------------
 -- drums
