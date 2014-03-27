@@ -79,5 +79,5 @@ library
   -- other-modules:       
   build-depends:       
     base >= 4, base < 5, temporal-music-notation>=0.4, 
-    csound-expression>=3.2.0, csound-catalog>=0.1.1,
+    csound-expression>=3.2.1, csound-catalog>=0.1.1,
     temporal-media >= 0.4, temporal-music-notation-western>=0.4.0
