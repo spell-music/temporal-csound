@@ -24,7 +24,7 @@ description:
     You can find the short intro in the module "Csound".
     .
     * The tutorial for csound-epression packageb (timbres):
-        <https://github.com/anton-k/csound-expression/blob/master/tutorial/QuickStart.markdown> 
+        <https://github.com/anton-k/csound-expression/blob/master/tutorial/Index.md> 
     .
     * The tutorial for temporal-music-notation package (composition)
          and temporal-music-notation-western package (standard names for notes): see module "Csound"    
