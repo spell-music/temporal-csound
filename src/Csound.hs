@@ -130,7 +130,7 @@ module Csound (
 
 import Temporal.Media(Track)
 import Csound.Base
-import Temporal.Music.Western.P12 hiding (delay, event, line, chord, tone)
+import Temporal.Music.Western.P12 hiding (delay, line, tone)
 
 instance CsdSco (Track Double) where
     toCsdEventList x = CsdEventList (dur x) (fmap toEvt $ render x)

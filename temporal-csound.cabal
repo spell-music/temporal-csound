@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                temporal-csound
-version:             0.4.0
+version:             0.4.1
 synopsis:            library to make electronic music, brings together temporal-music-notation and csound-expression packages
 license:             BSD3
 license-file:        LICENSE
@@ -79,5 +79,5 @@ library
   -- other-modules:       
   build-depends:       
     base >= 4, base < 5, temporal-music-notation>=0.4, 
-    csound-expression>=4.0.0, csound-catalog>=0.2.0,
+    csound-expression>=4.2.0, csound-catalog>=0.2.0,
     temporal-media >= 0.4, temporal-music-notation-western>=0.4.0
