@@ -1,4 +1,4 @@
-{-# Language FlexibleInstances #-}
+{-# Language FlexibleInstances, FlexibleContexts #-}
 -- | Defines instance of 'Csound.Base.CsdSco' for 'Temporal.Music.Score.Score' and
 --  reexports all functions from packages csound-expression and temporal-music-notation-western.
 --
@@ -178,26 +178,26 @@ toMidiInstrWith :: (Outs b) => a -> (CsdNote a -> b) -> (Msg -> SE (SigOuts b))
 toMidiInstrWith defVal f = \msg -> toOuts $ f (ampmidi msg 1, cpsmidi msg, defVal) 
 
 -- | Triggers an instrument on all midi-channels.
-onMidi :: (Default a, Outs b) => (CsdNote a -> b) -> SigOuts b
+onMidi :: (Default a, Outs b, Num (SigOuts b)) => (CsdNote a -> b) -> SE (SigOuts b)
 onMidi f = midi $ toMidiInstr f
 
 -- | Triggers an instrument on the given midi-channel.
-onMidin :: (Default a, Outs b) => Channel -> (CsdNote a -> b) -> SigOuts b
+onMidin :: (Default a, Outs b, Num (SigOuts b)) => Channel -> (CsdNote a -> b) -> SE (SigOuts b)
 onMidin chn f = midin chn $ toMidiInstr f
 
 -- | Triggers an instrument on channel and programm bank.
-onPgmidi :: (Default a, Outs b) => Maybe Int -> Channel -> (CsdNote a -> b) -> SigOuts b
+onPgmidi :: (Default a, Outs b, Num (SigOuts b)) => Maybe Int -> Channel -> (CsdNote a -> b) -> SE (SigOuts b)
 onPgmidi pgm chn f = pgmidi pgm chn $ toMidiInstr f
 
 -- | Just like @onMidi@ but takes a value for default auxiliary parameters.
-onMidiWith :: (Outs b) => a -> (CsdNote a -> b) -> SigOuts b
+onMidiWith :: (Outs b, Num (SigOuts b)) => a -> (CsdNote a -> b) -> SE (SigOuts b)
 onMidiWith defVal f = midi $ toMidiInstrWith defVal f
 
 -- | Just like @onMidin@ but takes a value for default auxiliary parameters.
-onMidinWith :: (Outs b) => a -> Channel -> (CsdNote a -> b) -> SigOuts b
+onMidinWith :: (Outs b, Num (SigOuts b)) => a -> Channel -> (CsdNote a -> b) -> SE (SigOuts b)
 onMidinWith defVal chn f = midin chn $ toMidiInstrWith defVal f
 
 -- | Just like @onPgmidi@ but takes a value for default auxiliary parameters.
-onPgmidiWith :: (Outs b) => a -> Maybe Int -> Channel -> (CsdNote a -> b) -> SigOuts b
+onPgmidiWith :: (Outs b, Num (SigOuts b)) => a -> Maybe Int -> Channel -> (CsdNote a -> b) -> SE (SigOuts b)
 onPgmidiWith defVal pgm chn f = pgmidi pgm chn $ toMidiInstrWith defVal f
 
