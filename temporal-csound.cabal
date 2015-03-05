@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                temporal-csound
-version:             0.4.3
+version:             0.4.3.1
 synopsis:            library to make electronic music, brings together temporal-music-notation and csound-expression packages
 license:             BSD3
 license-file:        LICENSE
@@ -43,11 +43,11 @@ description:
     Library strives to be very simple. For example, to trigger the instrument with virtual midi-device is
     as simple as (in ghci with loaded modules "Csound" and "Csound.Patch")
     .
-    > Csound Csound.Patch> vdac $ mul 0.2 $ largeHall $ onMidi stringPad
+    > Csound Csound.Patch> vdac $ mul 0.2 $ fmap largeHall $ onMidi stringPad
     .
     If you have a connected hardware midi-device you can just type:
     .
-    > Csound Csound.Patch> dac $ mul 0.2 $ largeHall $ onMidi stringPad
+    > Csound Csound.Patch> dac $ mul 0.2 $ fmap largeHall $ onMidi stringPad
     .
     And you are ready to go. To play a C-major chord just do:
     .
